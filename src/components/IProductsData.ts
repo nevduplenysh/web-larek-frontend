@@ -2,7 +2,7 @@ import { IProduct, IProductsData } from "../types";
 import { IEvents } from "./base/events";
 
 export class ProductsData implements IProductsData {
-    protected _items: IProduct[]; // инициализация массива
+    protected _items: IProduct[] = []; // инициализация массива
     protected _preview: string | null;
     protected events: IEvents;
 
@@ -10,14 +10,22 @@ export class ProductsData implements IProductsData {
         this.events = events;
     }
 
-    // Реализация свойства items
-    get items() {
+    set items(items:IProduct[]) {
+        this._items = items;
+        this.events.emit("catalog:changed", { items: this.items });
+    }
+
+    get items () {
         return this._items;
     }
 
     // Поиск товара по ID
     getProduct(productId: string) {
-        return this._items.find((item) => item.id === productId); // исправлено на "id"
+        return this._items.find((item) => item.id === productId); 
+    }
+
+    getProducts() {
+        return this._items;
     }
 
     // Установка и получение превью

@@ -7,30 +7,12 @@ export interface IProduct{
     price: number;
 }
 
-
+// массив карточек (данные)
 export interface IProductsData {
     items: IProduct[];
     preview: string | null; // указатель на карточку
     getProduct(productId: string): IProduct; 
-    // setItems (items: IProduct[]): void;
 }
-
-
-export interface IUserPayment  {
-    paymentMethod: string;
-    address: string;
-}
-
-export interface IUserСontacts {
-    email: string;
-    phone: string;
-}
-
-
-
-
-
-
 
 
 // данные корзины
@@ -40,37 +22,42 @@ export interface IBasketData {
     addProduct(product: IProduct): void; // void - ничего не возвращает 
     deleteProduct(productId: string, payload: Function | null): void;  // payload - доп нагрузка (чтобы это не значило)
     getProduct(productId: string): IProduct;
-    // getTotalPrice(): number;
-    // clear(): void;
+    getTotalPrice(): number;
+    clear(): void;
 }
 
-// заказ
+export interface IUserData {
+    paymentMethod: string;
+    address: string;
+    email: string;
+    phone: string;
+}
+
+// заказ: хранятся данные польхователя
 export interface IOrderData {
-    basketData: IBasketData;
-    // basket: IProduct[];
-    userPayment: IUserPayment;
-    userСontacts: IUserСontacts;
-    getOrderInfo(): object;
-    // checkValidation(): boolean;
+    order: IUserData;
+    formErrors: FormErrors;
 }
 
+export type FormErrors = Partial<Record<keyof IUserData, string>>;
 
+export interface IOrderState {
+    valid: boolean;
+    errors: string[];
+    address: string;
+    paymentMethod: "card" | "cash" | null;
+}
 
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' ;
 
-
-
-
-
-
-
-
+export interface IApi {
+    baseUrl: string;
+    get<T>(url: string): Promise<T>;
+    post<T>(url: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
 
 export interface IOrderResult {
     id: string;
     total: number;
 }
 
-// export type TCardInfo = Pick<IProduct, 'category' | 'title' | 'description' |  'price' | 'image'>
-// export type TBasketInfo = Pick<IProduct, 'title' | 'price'>
-// export type TPaymentForm = Pick<IUser, 'paymentMethod' | 'address'>
-// export type TContactForm = Pick<IUser, 'email' | 'telephone'>
