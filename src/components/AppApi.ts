@@ -1,4 +1,4 @@
-import { IApi, IOrderResult, IProduct, IUserData  } from '../types';
+import { IApi, IOrder, IOrderResult, IProduct } from '../types';
 import { ApiListResponse } from './base/api';
 
 export class AppApi {
@@ -19,7 +19,7 @@ export class AppApi {
         );
     }
 
-	postOrder(orderData: IUserData): Promise<IOrderResult> {
+	postOrder(orderData: IOrder): Promise<IOrderResult> {
 		return this._baseApi.post<IOrderResult>('/order', orderData).then((result: IOrderResult) => result);
 	}
 	

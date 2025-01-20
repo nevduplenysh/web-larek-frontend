@@ -12,6 +12,7 @@ export interface IProductsData {
     items: IProduct[];
     preview: string | null; // указатель на карточку
     getProduct(productId: string): IProduct; 
+    getProducts(): IProduct[];
 }
 
 
@@ -19,34 +20,35 @@ export interface IProductsData {
 export interface IBasketData {
     items: IProduct[];
     preview: string | null;
-    addProduct(product: IProduct): void; // void - ничего не возвращает 
-    deleteProduct(productId: string, payload: Function | null): void;  // payload - доп нагрузка (чтобы это не значило)
+    addProduct(product: IProduct): void; 
+    deleteProduct(productId: string, payload: Function | null): void; 
     getProduct(productId: string): IProduct;
     getTotalPrice(): number;
     clear(): void;
 }
 
-export interface IUserData {
-    paymentMethod: string;
+export interface IDataPayment {
+    payment: string;
     address: string;
-    email: string;
-    phone: string;
+}
+  
+export interface IDataContacts {
+    email: string,
+    phone: string,
 }
 
-// заказ: хранятся данные польхователя
-export interface IOrderData {
-    order: IUserData;
-    formErrors: FormErrors;
+
+export interface IOrder extends IDataPayment, IDataContacts {
+    total: number;
+    items: string[];
 }
 
-export type FormErrors = Partial<Record<keyof IUserData, string>>;
-
-export interface IOrderState {
-    valid: boolean;
-    errors: string[];
-    address: string;
-    paymentMethod: "card" | "cash" | null;
+export interface IAppState {
+    preview: string | null;
+    order: IOrder | null;
 }
+
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' ;
 

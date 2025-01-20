@@ -25,7 +25,6 @@ export class Basket extends Component<IBasketView> {
                 events.emit('formPayment:open');
             });
         }
-
         this.items = [];
     }
 
@@ -44,5 +43,4 @@ export class Basket extends Component<IBasketView> {
     set total(total: number) {
         this.setText(this._total, total.toString() + ' синапсов');
     }
-    
 }

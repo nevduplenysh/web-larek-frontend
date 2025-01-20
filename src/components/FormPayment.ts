@@ -7,7 +7,7 @@ interface IFormState {
     errors: string[];
 }
 
-export class FormContacts<T> extends Component<IFormState> {
+export class FormPayment<T> extends Component<IFormState> {
     protected _submit: HTMLButtonElement;
     protected _errors: HTMLElement;
 
@@ -26,7 +26,7 @@ export class FormContacts<T> extends Component<IFormState> {
 
         this.container.addEventListener('submit', (e: Event) => {
             e.preventDefault();
-            this.events.emit(`${this.container.name}:submit`);
+            events.emit('formContacts:open');
         });
     }
 

@@ -24,6 +24,7 @@ export class ProductsData implements IProductsData {
         return this._items.find((item) => item.id === productId); 
     }
 
+    // возвращает весь массив товаров
     getProducts() {
         return this._items;
     }

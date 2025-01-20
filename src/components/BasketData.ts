@@ -12,18 +12,15 @@ export class BasketData implements IBasketData {
         this.events = events;
     }
 
-    // Установить товары в корзину
     set items(items: IProduct[]) {
         this._items = items;
         this.events.emit('basket:changed', { items: this._items });
     }
 
-    // Получить товары в корзине
     get items() {
         return this._items;
     }
 
-    // Поиск товара по ID
     getProduct(productId: string): IProduct | undefined {
         return this._items.find((item) => item.id === productId);
     }
@@ -45,12 +42,6 @@ export class BasketData implements IBasketData {
         return this._preview;
     }
 
-    ///////////////////////////////////////////////////
-    get count(): number {
-        return this._items.length;
-    }
-
-    // Добавить товар в корзину
     addProduct(product: IProduct) {
         // Проверка, если товар уже есть в корзине
         const existingProduct = this._items.find(item => item.id === product.id);
@@ -65,7 +56,6 @@ export class BasketData implements IBasketData {
         }
     }
 
-    // Удалить товар из корзины
     deleteProduct(productId: string, payload?: () => void) {
         const initialLength = this._items.length;
         this._items = this._items.filter((item) => item.id !== productId);
@@ -75,20 +65,14 @@ export class BasketData implements IBasketData {
             if (payload) payload();
         } else {
             console.warn(`Товар с ID ${productId} не найден в корзине.`);
-            // Можно выбросить исключение, если нужно строго обработать эту ошибку
-            // throw new Error(`Товар с ID ${productId} не найден в корзине.`);
         }
     }
 
     // Получить общую стоимость товаров в корзине
     getTotalPrice(): number {
         return this._items.reduce((total, item) => {
-            return total + (item.price || 0); // Используем (item.price || 0) для безопасности
+            return total + (item.price || 0); 
         }, 0);
-    }
-
-    get currentCardIndex() {
-        return this._currentCardIndex;
     }
 
     // Очистить корзину
@@ -96,5 +80,4 @@ export class BasketData implements IBasketData {
         this._items = [];
         this.events.emit('basket:cleared');
     }
-    
 }
