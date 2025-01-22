@@ -77,7 +77,10 @@ events.on(`card:select`, (data: { card: Card }) => {
     const { card } = data;
     const productModalData = productsData.getProduct(card.id);
     const cardModal = new Card(cloneTemplate(cardModalTemplate), events);
+    const isCardInBasket = basketData.items.some(product => product.id === card.id);
+    card.isAddButtonDisabled(isCardInBasket);
 
+    console.log(basketData.items.map(product => product.id))
     modal.render({
         content: cardModal.render(productModalData)
     });
@@ -112,11 +115,11 @@ events.on('basket:changed', (data: { items: IProduct[] }) => {
         return cardBasket.render(product); 
     }); 
     
+    console.log(basketData.items.map(product => product.id))
 
     basket.total = basketData.getTotalPrice() || 0; 
     page.counter = items.length; 
     
-     
     modal.render({  
         content: basket.render()  // Обновляем отображение корзины в модальном окне 
     }); 
@@ -150,8 +153,6 @@ events.on('formPaymentErrors:change', (errors: Partial<IDataPayment>) => {
     const { payment, address } = errors;  
     order.valid = !payment && !address;
     order.errors = Object.values({payment, address}).filter(i => !!i).join('; ');
-    order.buttonActive();
-    // order.buttonActive();
 });
 
 // Изменилось одно из полей
