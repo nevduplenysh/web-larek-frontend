@@ -4,8 +4,6 @@ import { IEvents } from "./base/events";
 
 export class BasketData implements IBasketData {
     protected _items: IProduct[] = []; // Инициализация массива
-    protected _preview: string | null = null;
-    protected _currentCardIndex: number | null = null;
     protected events: IEvents;
 
     constructor(events: IEvents) {
@@ -25,23 +23,6 @@ export class BasketData implements IBasketData {
         return this._items.find((item) => item.id === productId);
     }
 
-    // Установка и получение превью
-    set preview(cardId: string | null) {
-        if (!cardId) {
-            this._preview = null;
-            return;
-        }
-        const selectedCard = this.getProduct(cardId);
-        if (selectedCard) {
-            this._preview = cardId;
-            this.events.emit('card:selected', { card: selectedCard });
-        }
-    }
-
-    get preview() {
-        return this._preview;
-    }
-
     addProduct(product: IProduct) {
         // Проверка, если товар уже есть в корзине
         const existingProduct = this._items.find(item => item.id === product.id);
@@ -53,6 +34,7 @@ export class BasketData implements IBasketData {
         } else {
             // Если товар уже есть в корзине, выводим предупреждение
             console.warn(`Товар с ID ${product.id} уже в корзине.`);
+            this.events.emit('cardInBasket:add', { flag: false })
         }
     }
 
@@ -78,6 +60,52 @@ export class BasketData implements IBasketData {
     // Очистить корзину
     clear() {
         this._items = [];
-        this.events.emit('basket:cleared');
+        this.events.emit('basket:changed', { items: this._items });
     }
 }
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Установка и получение превью
+    // set preview(cardId: string | null) {
+    //     if (!cardId) {
+    //         this._preview = null;
+    //         return;
+    //     }
+    //     const selectedCard = this.getProduct(cardId);
+    //     if (selectedCard) {
+    //         this._preview = cardId;
+    //         this.events.emit('card:selected', { card: selectedCard });
+    //     }
+    // }
+
+    // get preview() {
+    //     return this._preview;
+    // }

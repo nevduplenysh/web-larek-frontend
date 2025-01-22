@@ -19,7 +19,7 @@ export interface IProductsData {
 // данные корзины
 export interface IBasketData {
     items: IProduct[];
-    preview: string | null;
+    // preview: string | null;
     addProduct(product: IProduct): void; 
     deleteProduct(productId: string, payload: Function | null): void; 
     getProduct(productId: string): IProduct;
@@ -39,8 +39,6 @@ export interface IDataContacts {
 
 
 export interface IOrder extends IDataPayment, IDataContacts {
-    total: number;
-    items: string[];
 }
 
 export interface IAppState {

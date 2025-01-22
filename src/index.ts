@@ -14,7 +14,7 @@ import { Basket } from './components/Basket';
 import { Page } from './components/Page';
 import { IDataPayment, DataPayment } from './components/DataPayment';
 import { DataContacts } from './components/DataContacts';
-import { FormContacts } from './components/FormContacts';
+// import { FormContacts } from './components/FormContacts';
 import { AppState } from './components/AppState';
 import { Success } from './components/Success';
 
@@ -46,7 +46,12 @@ const basketData = new BasketData(events); // данные корзины
 const order = new DataPayment(cloneTemplate(formOderTemplete), events);
 const contacts = new DataContacts(cloneTemplate(formContactsTemplete), events)
 const appData = new AppState({}, events);
-
+const success = new Success(cloneTemplate(successTemplate), {
+    onClick: () => {
+        modal.close();
+        appData.clearOrder();
+    }
+});
 
 
 api.getCards()
@@ -78,45 +83,44 @@ events.on(`card:select`, (data: { card: Card }) => {
     });
 })
 
-events.on('card:add', (data: { card: Card }) => {
-    const { card } = data; 
-    const basketItemData = productsData.getProduct(card.id);
-    basketData.addProduct(basketItemData); // обновленный массив данных корзины
-    modal.close();
-  });
-
-events.on('basket:open', () => {
-    modal.render({
-        content: createElement<HTMLElement>('div', {}, [
-            basket.render()
-        ])
-    });
-});
-
-events.on('card:delete', (data: { card: Card }) => {
-    const { card } = data; 
-    const basketItemData = productsData.getProduct(card.id);
-    basketData.deleteProduct(basketItemData.id); // обновленный массив данных корзины  
-  });
-
-events.on('basket:changed', (data: { items: IProduct[] }) => {
-    const { items } = data;
-    basket.items = items.map((product, index) => {
-        const cardBasket = new Card(cloneTemplate(cardBasketTemplate), events);
-        cardBasket.index = index + 1;
-        return cardBasket.render(product);
-    });
-
-    basket.total = basketData.getTotalPrice() || 0;
-    appData.order.total = basketData.getTotalPrice();
-    appData.order.items = items.map(product => product.id);
-    page.counter = items.length;
-    
+events.on('card:add', (data: { card: Card }) => { 
+    const { card } = data;  
+    const basketItemData = productsData.getProduct(card.id); 
+    basketData.addProduct(basketItemData); // обновленный массив данных корзины 
+    modal.close(); 
+  }); 
+ 
+events.on('basket:open', () => { 
     modal.render({ 
-        content: basket.render()  // Обновляем отображение корзины в модальном окне
-    });
-});
+        content: createElement<HTMLElement>('div', {}, [ 
+            basket.render() 
+        ]) 
+    }); 
+}); 
+ 
+events.on('card:delete', (data: { card: Card }) => { 
+    const { card } = data;  
+    const basketItemData = productsData.getProduct(card.id); 
+    basketData.deleteProduct(basketItemData.id); // обновленный массив данных корзины   
+  }); 
 
+events.on('basket:changed', (data: { items: IProduct[] }) => { 
+    const { items } = data; 
+    basket.items = items.map((product, index) => { 
+        const cardBasket = new Card(cloneTemplate(cardBasketTemplate), events); 
+        cardBasket.index = index + 1; 
+        return cardBasket.render(product); 
+    }); 
+    
+
+    basket.total = basketData.getTotalPrice() || 0; 
+    page.counter = items.length; 
+    
+     
+    modal.render({  
+        content: basket.render()  // Обновляем отображение корзины в модальном окне 
+    }); 
+}); 
 
 // Блокируем прокрутку страницы если открыта модалка
 events.on('modal:open', () => {
@@ -130,11 +134,12 @@ events.on('modal:close', () => {
 
 // Открыть форму заказа
 events.on('formPayment:open', () => {
+    const isValid = Boolean(appData.order.payment && appData.order.address);
     modal.render({
         content: order.render({
             payment: appData.order.payment,
             address: appData.order.address,
-            valid: false,
+            valid: isValid,
             errors: []
         })
     });
@@ -145,20 +150,23 @@ events.on('formPaymentErrors:change', (errors: Partial<IDataPayment>) => {
     const { payment, address } = errors;  
     order.valid = !payment && !address;
     order.errors = Object.values({payment, address}).filter(i => !!i).join('; ');
+    order.buttonActive();
+    // order.buttonActive();
 });
 
 // Изменилось одно из полей
 events.on(/^order\..*:change/, (data: { field: keyof IDataPayment, value: string }) => {
     appData.setOrderField(data.field, data.value);
+    
 });
 
-
-events.on('formContacts:open', (a) => {
+events.on('order:submit', (a) => {
+    const isValid = Boolean(appData.order.email && appData.order.phone);
     modal.render({
         content: contacts.render({
             email: appData.order.email,
             phone: appData.order.phone,
-            valid: false,
+            valid: isValid,
             errors: []
         })
     });
@@ -169,6 +177,7 @@ events.on('formContactsErrors:change', (errors: Partial<IDataContacts>) => {
     const { email, phone } = errors;  
     contacts.valid = !email && !phone;
     contacts.errors = Object.values({email, phone}).filter(i => !!i).join('; ');
+
 });
 
 // // Изменилось одно из полей
@@ -177,17 +186,15 @@ events.on(/^contacts\..*:change/, (data: { field: keyof IDataContacts, value: st
 });
 
 events.on('contacts:submit', () => {
-    api.postOrder(appData.order)
+    const orderData = {
+        ...appData.order, // Данные из appData.order
+        items: basketData.items.map(product => product.id), // Идентификаторы товаров
+        total: basketData.getTotalPrice(), // Общая стоимость
+    };
+    api.postOrder(orderData)
         .then((result) => {
-            const success = new Success(cloneTemplate(successTemplate), {
-                onClick: () => {
-                    modal.close();
-                    basketData.clear();
-                    appData.clearOrder();
-                }
-            });
-
-            success.total = basketData.getTotalPrice();
+            basketData.clear();
+            success.total = result.total;
 
             modal.render({
                 content: success.render({})
@@ -196,10 +203,4 @@ events.on('contacts:submit', () => {
         .catch(err => {
             console.error(err);
         });
-});
-
-events.on('basket:cleared', () => {
-    basket.items = []; 
-    basket.total = 0;  
-    page.counter = 0; 
 });

@@ -21,6 +21,5 @@ export class AppApi {
 
 	postOrder(orderData: IOrder): Promise<IOrderResult> {
 		return this._baseApi.post<IOrderResult>('/order', orderData).then((result: IOrderResult) => result);
-	}
-	
+	}	
 }

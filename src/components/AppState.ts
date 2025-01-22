@@ -1,5 +1,6 @@
 import { FormErrors, IAppState, IDataContacts, IOrder, IDataPayment } from "../types";
 import { Model } from "./base/Model";
+import { BasketData } from "./BasketData";
 
 
 export class AppState extends Model<IAppState> {
@@ -8,8 +9,6 @@ export class AppState extends Model<IAppState> {
         address: '',
         email: '',
         phone: '',
-        total: 0, 
-        items: []
     };
     formErrors: FormErrors = {};
 
@@ -18,15 +17,16 @@ export class AppState extends Model<IAppState> {
         this.order.address = '';
         this.order.email = '';
         this.order.phone = '';
-        this.order.total = 0;
-        this.order.items = [];
     }
 
     setOrderField(field: keyof IDataPayment, value: string){
         this.order[field] = value;
+        if (field == "payment") {
+            this.events.emit('payment:choose');
+        }
 
         if (this.validateOrder()) {
-            this.events.emit('payment:ready', this.order);
+            this.events.emit('payment:ready');
         }
     }
 

@@ -1,4 +1,4 @@
-import { FormPayment } from "./FormPayment";
+import { Form } from "./Form";
 import { IEvents } from "./base/events";
 
 export interface IDataPayment {
@@ -6,7 +6,7 @@ export interface IDataPayment {
     address: string;  
   }
   
-export class DataPayment extends FormPayment<IDataPayment> {
+export class DataPayment extends Form<IDataPayment> {
   constructor(container: HTMLFormElement, events: IEvents) {
     super(container, events);
 
@@ -15,7 +15,6 @@ export class DataPayment extends FormPayment<IDataPayment> {
       button.addEventListener("click", () => {
         const payment = button.name as IDataPayment['payment'];
         this.onInputChange("payment", payment);
-        paymentButtons.forEach((btn) => this.setDisabled(btn, btn === button));
       });
     });
   }

@@ -1,4 +1,4 @@
-import { FormContacts } from "./FormContacts";
+import { Form } from "./Form";
 import { IEvents } from "./base/events";
 
 export interface IDataContacts {
@@ -6,7 +6,7 @@ export interface IDataContacts {
     phone: string;
   }
 
-export class DataContacts extends FormContacts<IDataContacts> {
+export class DataContacts extends Form<IDataContacts> {
   constructor(container: HTMLFormElement, events: IEvents) {
     super(container, events);
   }
