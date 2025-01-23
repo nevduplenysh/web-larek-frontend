@@ -124,14 +124,15 @@ export class Card extends Component<IProduct> {
 		if (this._price) { 
 			if (price === null) { 
 				this.setText(this._price, 'Бесценный'); // Выводим "Бесценный" 
+				if (this.addBasketButton) { 
+					this.addBasketButton.disabled = true; // Делаем кнопку неактивной, если цена null 
+			} 
 				 
 			} else { 
 				this.setText(this._price, `${price} синапсов`); // Выводим цену как есть 
 			} 
 		} 
-		if (this.addBasketButton) { 
-			this.addBasketButton.disabled = price === null; // Делаем кнопку неактивной, если цена null 
-		} 
+		
 	} 
 
 	set id(id) { 
