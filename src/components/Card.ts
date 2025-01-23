@@ -62,11 +62,12 @@ export class Card extends Component<IProduct> {
 		return super.render(otherCardData);  
     } 
 
-	isAddButtonDisabled(isDisabled: boolean) {
-        if (this.addBasketButton) {
-            this.setDisabled(this.addBasketButton, isDisabled);
-        }
-    }
+	updateAddButtonState(isInBasket: boolean) {
+		if (this.addBasketButton) {
+			this.addBasketButton.disabled = isInBasket;
+			console.log(`Кнопка добавления ${isInBasket ? 'заблокирована' : 'разблокирована'}`);
+		}
+	}
 
 	set index(index: number) { 
         if (this.cardItem) { 

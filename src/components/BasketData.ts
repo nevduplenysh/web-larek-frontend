@@ -34,7 +34,6 @@ export class BasketData implements IBasketData {
         } else {
             // Если товар уже есть в корзине, выводим предупреждение
             console.warn(`Товар с ID ${product.id} уже в корзине.`);
-            this.events.emit('cardInBasket:add', { flag: false })
         }
     }
 
@@ -63,49 +62,3 @@ export class BasketData implements IBasketData {
         this.events.emit('basket:changed', { items: this._items });
     }
 }
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Установка и получение превью
-    // set preview(cardId: string | null) {
-    //     if (!cardId) {
-    //         this._preview = null;
-    //         return;
-    //     }
-    //     const selectedCard = this.getProduct(cardId);
-    //     if (selectedCard) {
-    //         this._preview = cardId;
-    //         this.events.emit('card:selected', { card: selectedCard });
-    //     }
-    // }
-
-    // get preview() {
-    //     return this._preview;
-    // }

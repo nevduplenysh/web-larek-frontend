@@ -77,8 +77,9 @@ events.on(`card:select`, (data: { card: Card }) => {
     const { card } = data;
     const productModalData = productsData.getProduct(card.id);
     const cardModal = new Card(cloneTemplate(cardModalTemplate), events);
+
     const isCardInBasket = basketData.items.some(product => product.id === card.id);
-    card.isAddButtonDisabled(isCardInBasket);
+    cardModal.updateAddButtonState(isCardInBasket);
 
     console.log(basketData.items.map(product => product.id))
     modal.render({
@@ -114,9 +115,6 @@ events.on('basket:changed', (data: { items: IProduct[] }) => {
         cardBasket.index = index + 1; 
         return cardBasket.render(product); 
     }); 
-    
-    console.log(basketData.items.map(product => product.id))
-
     basket.total = basketData.getTotalPrice() || 0; 
     page.counter = items.length; 
     
@@ -196,7 +194,7 @@ events.on('contacts:submit', () => {
         .then((result) => {
             basketData.clear();
             success.total = result.total;
-
+            appData.clearOrder();
             modal.render({
                 content: success.render({})
             });

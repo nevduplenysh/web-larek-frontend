@@ -213,6 +213,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 Поля класса содержат элементы разметки элементов карточки. Конструктор, кроме темплейта принимает экземпляр `EventEmitter` для инициации событий.\
 
 Методы:
+- updateAddButtonState(isInBasket: boolean)
 - deleteCard()
 а также геттеры и сеттеры 
 
@@ -270,7 +271,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 - `formPayment:open` - открыть форму с выбором оплаты
 - `formContacts:open` - открыть форму с указанием данных пользователя
 - `formContactsErrors:change` - обработка изменений в состоянии валидации формы с контактными данными.
--  `formPaymentErrors:change` - обработка изменений в состоянии валидации формы с выбором оплаты.
+- `formPaymentErrors:change` - обработка изменений в состоянии валидации формы с выбором оплаты.
 
 - `/^contacts\..*:change/` - обработка изменений любого поля формы с контактами.
 - `/^order\..*:change/` - обработка изменений любого поля формы с выюором оплаы.
